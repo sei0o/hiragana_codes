@@ -1,0 +1,6 @@
+#! /usr/bin/env ruby
+
+require "hiragana_codes"
+
+code = ARGV[0].chomp
+puts HiraganaCodes.decode code

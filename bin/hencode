@@ -1,0 +1,14 @@
+#! /usr/bin/env ruby
+
+require "hiragana_codes"
+
+latitude = ARGV[0].to_f
+if (0..90).include? latitude # 北極(N90)起点の緯度に変更
+  adjusted_latitude = 90 - latitude
+elsif (-90..0).include? latitude
+  adjusted_latitude = latitude * -1 + 90
+end
+
+adjusted_longitude = ARGV[1].to_f + 180
+
+puts HiraganaCodes.encode adjusted_latitude, adjusted_longitude, ARGV[2].to_i
