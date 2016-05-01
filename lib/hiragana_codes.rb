@@ -3,7 +3,7 @@ require "hiragana_codes/version"
 module HiraganaCodes
   CHARACTERS = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもらりるれろ".split ""
 
-  def encode latitude, longitude, area_fineness = 4, next_area_fineness = 0 # 緯度、経度(N90, W180 を起点として)、変換後の細かさ(0で最大)、次に変換するときの細かさ
+  def self.encode latitude, longitude, area_fineness = 4, next_area_fineness = 0 # 緯度、経度(N90, W180 を起点として)、変換後の細かさ(0で最大)、次に変換するときの細かさ
     return if area_fineness < next_area_fineness
 
     latitude_code = CHARACTERS[(latitude / latitude_per_character(next_area_fineness)).floor]
@@ -17,7 +17,7 @@ module HiraganaCodes
     latitude_code + longitude_code + encode(relative_latitude, relative_longitude, area_fineness, next_area_fineness + 1)
   end
 
-  def decode code
+  def self.decode code
     return if code.size.odd?
 
     area_westmost = area_eastmost = area_northmost = area_southmost = 0
@@ -33,7 +33,7 @@ module HiraganaCodes
     [area_westmost, area_eastmost, area_northmost, area_southmost]
   end
 
-  def area_westmost latitude, area_fineness = 0 # 緯度経度の属するareaの最西端
+  def self.area_westmost latitude, area_fineness = 0 # 緯度経度の属するareaの最西端
     # latitudeが42度のとき、latitude_per_character(area_fineness)が10とすると、
     # (latitude / latitude_per_character(area_fineness)) は4.2、floorして4になるから、
     # その地点の左に4地区あるということになる。
@@ -41,18 +41,18 @@ module HiraganaCodes
     (latitude / latitude_per_character(area_fineness)).floor * latitude_per_character(area_fineness)
   end
 
-  def area_northmost longitude, area_fineness = 0 # 緯度経度の属するareaの最北端
+  def self.area_northmost longitude, area_fineness = 0 # 緯度経度の属するareaの最北端
     (longitude / longitude_per_character(area_fineness)).floor * longitude_per_character(area_fineness)
   end
 
-  def latitude_per_character area_fineness = 0 # 1文字ごとに割り当てる緯度
+  def self.latitude_per_character area_fineness = 0 # 1文字ごとに割り当てる緯度
     degree = 180
     (area_fineness + 1).times { degree /= CHARACTERS.size.to_f } # area_finenessが0なら一回, 1なら二回, 地区を分割する
 
     degree
   end
 
-  def longitude_per_character area_fineness = 0 # 1文字ごとに割り当てる経度
+  def self.longitude_per_character area_fineness = 0 # 1文字ごとに割り当てる経度
     degree = 360
     (area_fineness + 1).times { degree /= CHARACTERS.size.to_f }
 
